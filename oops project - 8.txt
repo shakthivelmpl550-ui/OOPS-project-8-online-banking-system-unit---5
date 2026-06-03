@@ -1,0 +1,153 @@
+import java.util.*;
+
+// Abstract Class
+abstract class Account {
+    private int accNo;
+    private String name;
+    protected double balance;
+
+    public Account(int accNo, String name, double balance) {
+        this.accNo = accNo;
+        this.name = name;
+        this.balance = balance;
+    }
+
+    public int getAccNo() {
+        return accNo;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void deposit(double amount) {
+        balance += amount;
+        System.out.println("Amount Deposited!");
+    }
+
+    public abstract void withdraw(double amount);
+
+    public void display() {
+        System.out.println("AccNo: " + accNo + " Name: " + name + " Balance: Rs." + balance);
+    }
+}
+
+// Savings Account
+class SavingsAccount extends Account {
+    public SavingsAccount(int accNo, String name, double balance) {
+        super(accNo, name, balance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (balance - amount >= 500) {
+            balance -= amount;
+            System.out.println("Withdrawn from Savings!");
+        } else {
+            System.out.println("Minimum balance Rs.500 required!");
+        }
+    }
+}
+
+// Current Account
+class CurrentAccount extends Account {
+    public CurrentAccount(int accNo, String name, double balance) {
+        super(accNo, name, balance);
+    }
+
+    @Override
+    public void withdraw(double amount) {
+        if (balance >= amount) {
+            balance -= amount;
+            System.out.println("Withdrawn from Current!");
+        } else {
+            System.out.println("Insufficient Balance!");
+        }
+    }
+}
+
+// Composition Class
+class Bank {
+    private List<Account> list = new ArrayList<>();
+
+    public void addAccount(Account a) {
+        list.add(a);
+        System.out.println("Account Created!");
+    }
+
+    public Account find(int accNo) {
+        for (Account a : list) {
+            if (a.getAccNo() == accNo)
+                return a;
+        }
+        return null;
+    }
+
+    public void displayAll() {
+        for (Account a : list) {
+            a.display();
+        }
+    }
+}
+
+// Main Class
+class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Bank bank = new Bank();
+
+        while (true) {
+            System.out.println("\n1.Create Savings\n2.Create Current\n3.Deposit\n4.Withdraw\n5.Display\n6.Exit");
+            int ch = sc.nextInt();
+
+            switch (ch) {
+                case 1:
+                    System.out.print("Enter AccNo: ");
+                    int s1 = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String n1 = sc.nextLine();
+                    System.out.print("Enter Balance: ");
+                    double b1 = sc.nextDouble();
+                    bank.addAccount(new SavingsAccount(s1, n1, b1));
+                    break;
+
+                case 2:
+                    System.out.print("Enter AccNo: ");
+                    int s2 = sc.nextInt();
+                    sc.nextLine();
+                    System.out.print("Enter Name: ");
+                    String n2 = sc.nextLine();
+                    System.out.print("Enter Balance: ");
+                    double b2 = sc.nextDouble();
+                    bank.addAccount(new CurrentAccount(s2, n2, b2));
+                    break;
+
+                case 3:
+                    System.out.print("Enter AccNo: ");
+                    Account a1 = bank.find(sc.nextInt());
+                    if (a1 != null) {
+                        System.out.print("Enter Amount: ");
+                        a1.deposit(sc.nextDouble());
+                    } else System.out.println("Not Found");
+                    break;
+
+                case 4:
+                    System.out.print("Enter AccNo: ");
+                    Account a2 = bank.find(sc.nextInt());
+                    if (a2 != null) {
+                        System.out.print("Enter Amount: ");
+                        a2.withdraw(sc.nextDouble());
+                    } else System.out.println("Not Found");
+                    break;
+
+                case 5:
+                    bank.displayAll();
+                    break;
+
+                case 6:
+                    System.exit(0);
+            }
+        }
+    }
+}
